@@ -30,6 +30,11 @@ def loginUser():
 
 @app.route('/menu', methods=['POST'])
 def addMenu():
+    headers = request.headers
+    bearer = headers.get('Authorization')    # Bearer YourTokenHere
+    token = bearer.split()[1]
+    if User.checkToken(token) is not True:
+        return Response("authentication failed", status=401, mimetype='application/json')
     request_data = request.get_json()  # getting data from client
     name = request_data["name"]
     if len(name) == 0 or isinstance(name, str) == False:
@@ -43,6 +48,12 @@ def addMenu():
 
 @app.route('/menu', methods=['DELETE'])
 def removeMenu():
+    headers = request.headers
+    bearer = headers.get('Authorization')    # Bearer YourTokenHere
+    token = bearer.split()[1]
+    if User.checkToken(token) is not True:
+        return Response("authentication failed", status=401, mimetype='application/json')
+
     name = request.headers['name']
     if len(name) == 0 or isinstance(name, str) == False:
         return Response("name wrrong value", status=400, mimetype='application/json')
@@ -72,6 +83,12 @@ def getMenu():
 
 @app.route('/dish', methods=['POST'])
 def adddish():
+    headers = request.headers
+    bearer = headers.get('Authorization')    # Bearer YourTokenHere
+    token = bearer.split()[1]
+    if User.checkToken(token) is not True:
+        return Response("authentication failed", status=401, mimetype='application/json')
+
     request_data = request.get_json()  # getting data from client
     name = request_data["name"]
     if len(name) == 0 or isinstance(name, str) == False:
@@ -105,6 +122,12 @@ def adddish():
 
 @app.route('/dish', methods=['PUT'])
 def updatedish():
+    headers = request.headers
+    bearer = headers.get('Authorization')    # Bearer YourTokenHere
+    token = bearer.split()[1]
+    if User.checkToken(token) is not True:
+        return Response("authentication failed", status=401, mimetype='application/json')
+
     request_data = request.get_json()  # getting data from client
     id = request_data["id"]
     if isinstance(id, int) == False:

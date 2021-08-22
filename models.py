@@ -36,6 +36,12 @@ class User(db.Model):
         else:
             return ''
 
+    def checkToken(_token):
+        if _token == os.environ['TOKEN']:
+            return True
+        else:
+            False
+
 
 class Menu(db.Model):
     __tablename__ = 'menus'
