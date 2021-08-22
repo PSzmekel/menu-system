@@ -3,6 +3,7 @@ import threading
 import time
 from models import Dish
 import json
+from smtplib import smtplib, SMTPException
 
 class mailing(threading.Thread):
     def __init__(self, value):
