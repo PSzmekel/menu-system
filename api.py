@@ -1,10 +1,14 @@
-from models import *
+import werkzeug
+werkzeug.cached_property = werkzeug.utils.cached_property
+from models import User, Menu, Dish
 from flask import request, Response, jsonify
 from mail import mailing
+from settings import app, api
+import os
 
 
 @app.route('/user', methods=['POST'])
-@app.doc(params={'name': 'name', 'password': 'password'},
+@api.doc(params={'name': 'name', 'password': 'password'},
          responses={201: 'User added',
                     409: 'User already exist'})
 def addUser():
@@ -17,7 +21,7 @@ def addUser():
 
 
 @app.route('/login', methods=['GET'])
-@app.doc(params={'userName': 'userName', 'password': 'password'},
+@api.doc(params={'userName': 'userName', 'password': 'password'},
          responses={200: 'Success',
                     400: 'Validation Error',
                     403: 'wrong password'})
@@ -37,7 +41,7 @@ def loginUser():
 
 
 @app.route('/menu', methods=['POST'])
-@app.doc(params={'name': 'menu name', 'password': 'password'},
+@api.doc(params={'name': 'menu name', 'password': 'password'},
          responses={201: 'Success',
                     400: 'Validation Error',
                     401: 'authentication failed',
@@ -60,7 +64,7 @@ def addMenu():
 
 
 @app.route('/menu', methods=['DELETE'])
-@app.doc(params={'name': 'name', 'password': 'password'},
+@api.doc(params={'name': 'name', 'password': 'password'},
          responses={201: 'Success',
                     400: 'Validation Error',
                     401: 'authentication failed',
@@ -85,7 +89,7 @@ def removeMenu():
 
 
 @app.route('/menu', methods=['GET'])
-@app.doc(params={'orderBy': 'orderBy'},
+@api.doc(params={'orderBy': 'orderBy'},
          responses={201: 'Success',
                     400: 'Validation Error'})
 def getMenu():
@@ -103,7 +107,7 @@ def getMenu():
 
 
 @app.route('/dish', methods=['POST'])
-@app.doc(params={'name': 'name', 'menuName': 'menuName',
+@api.doc(params={'name': 'name', 'menuName': 'menuName',
                  'description': 'description', 'price': 'price',
                  'timePreparation': 'timePreparation', 'vegan': 'vegan'},
          responses={201: 'Success',
@@ -148,7 +152,7 @@ def adddish():
         return Response("db error", 409, mimetype='application/json')
 
 @app.route('/dish', methods=['PUT'])
-@app.doc(params={'id': 'id',
+@api.doc(params={'id': 'id',
                  'name' : 'name',
                  'menuName': 'menu name',
                  'description': 'description',
@@ -199,7 +203,7 @@ def updatedish():
         return Response("db error", 409, mimetype='application/json')
 
 @app.route('/dish', methods=['GET'])
-@app.doc(params={'menu': 'menu name', 'dish': 'dish substring'},
+@api.doc(params={'menu': 'menu name', 'dish': 'dish substring'},
          responses={200: 'Success',
                     400: 'Validation Error'})
 def listDish():

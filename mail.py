@@ -3,7 +3,7 @@ import threading
 import time
 from models import Dish
 import json
-from smtplib import smtplib, SMTPException
+from smtplib import SMTP, SMTPException
 
 class mailing(threading.Thread):
     def __init__(self, value):
@@ -21,7 +21,7 @@ class mailing(threading.Thread):
                 message = json.dumps(Dish.listForMail())
 
                 try:
-                    smtpObj = smtplib.SMTP('localhost')
+                    smtpObj = SMTP('localhost')
                     smtpObj.sendmail(sender, receivers, message)
                 except SMTPException:
                     print('Error: unable to send email')

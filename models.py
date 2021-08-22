@@ -3,7 +3,7 @@ import os
 from sqlalchemy.orm import exc
 from sqlalchemy.sql.functions import func
 from settings import app
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash, cached_property
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc, desc
 
