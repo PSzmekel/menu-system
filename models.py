@@ -2,10 +2,11 @@ from datetime import datetime
 import os
 
 from sqlalchemy.orm import exc
+from sqlalchemy.sql.functions import func
 from settings import app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import exc
+from sqlalchemy import exc, desc
 
 db = SQLAlchemy(app)
 
@@ -36,11 +37,28 @@ class User(db.Model):
             return ''
 
 
-
 class Menu(db.Model):
     __tablename__ = 'menus'
     name = db.Column(db.String(80), primary_key=True)
     dishes = db.relationship('Dish', cascade="all,delete", backref='menu', lazy=True)
+
+    def json(self):
+        return {'name': self.name}
+
+    def get(_name):
+        '''function to get movie using the id of the movie as parameter'''
+        return Menu.query.filter_by(name=_name).first()
+
+
+    def getAll():
+        return [Menu.json(menu) for menu in Menu.query.filter(Dish.menuName == Menu.name).all()]
+
+    def getAllOBName():
+        return [Menu.json(menu) for menu in Menu.query.filter(Dish.menuName == Menu.name).order_by(Menu.name).all()]
+
+    def getAllOBDish():
+        return [Menu.json(menu) for menu in Menu.query.filter(Dish.menuName == Menu.name).group_by(Menu.name).order_by(desc(func.count(Dish.menuName))).all()]
+
 
     def add(_name):
         newMenu = Menu(name = _name)
@@ -51,6 +69,13 @@ class Menu(db.Model):
             db.session.rollback()
             return ex
         return None
+
+    def delete(self):
+        '''function to delete a movie from our database using
+           the id of the movie as a parameter'''
+        Menu.query.filter_by(name=self.name).delete()
+        # filter movie by id and delete
+        db.session.commit()  # commiting the new change to our database
 
 
 class Dish(db.Model):
