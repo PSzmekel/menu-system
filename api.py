@@ -1,12 +1,6 @@
 from models import *
 from flask import request, Response, jsonify
 
-@app.route('/movies', methods=['GET'])
-def get_movies():
-    '''Function to get all the movies in the database'''
-    return jsonify({'Movies': Movie.get_all_movies()})
-
-
 
 @app.route('/user', methods=['POST'])
 def addUser():
