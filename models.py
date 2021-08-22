@@ -80,7 +80,7 @@ class Menu(db.Model):
 
 class Dish(db.Model):
     __tablename__ = 'dishes'
-    id = db.Column(db.String(80), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     menuName = db.Column(db.String(80), db.ForeignKey('menus.name'), nullable=False)
     description = db.Column(db.String(256), nullable=False)
@@ -89,3 +89,44 @@ class Dish(db.Model):
     createdTime = db.Column(db.DateTime, default=datetime.utcnow)
     updatedTime = db.Column(db.DateTime, onupdate=datetime.utcnow)
     vegan = db.Column(db.Boolean, nullable=False)
+
+    def json(self):
+        return {'id': self.id, 'name': self.name,
+                'menuName': self.menuName, 'description': self.description,
+                'price': self.price, 'timePreparation': self.timePreparation,
+                'createdTime': self.createdTime, 'updatedTime': self.updatedTime,
+                'vegan': self.vegan}
+
+    def get(_id):
+        return Dish.query.filter_by(name=_id).first()
+
+    def add(_name, _menuName, _description, _price, _timePreparation, _vegan):
+        newDish = Dish(name = _name, menuName=_menuName, description = _description,
+                       price = _price, timePreparation = _timePreparation,
+                       vegan = _vegan)
+        db.session.add(newDish)
+        try:
+            db.session.commit()
+        except exc.IntegrityError as ex:
+            db.session.rollback()
+            return ex
+        return None
+
+    def update(_id, _name, _menuName, _description, _price, _timePreparation, _vegan):
+        dish_to_update = Dish.query.filter_by(id=_id).first()
+
+        dish_to_update.name = _name
+        dish_to_update.menuName = _menuName
+        dish_to_update.description = _description
+        dish_to_update.price = _price
+        dish_to_update.timePreparation = _timePreparation
+        dish_to_update.vegan = _vegan
+        try:
+            db.session.commit()
+        except exc.IntegrityError as ex:
+            db.session.rollback()
+            return ex
+        return None
+
+    def list(_menu, _substring):
+        return [Dish.json(dish) for dish in Dish.query.filter(Dish.menuName==_menu, Dish.name.contains(_substring)).all()]
