@@ -4,6 +4,9 @@ from mail import mailing
 
 
 @app.route('/user', methods=['POST'])
+@app.doc(params={'name': 'name', 'password': 'password'},
+         responses={201: 'User added',
+                    409: 'User already exist'})
 def addUser():
     request_data = request.get_json()  # getting data from client
     err = User.add(request_data["name"], request_data["password"])
@@ -14,6 +17,10 @@ def addUser():
 
 
 @app.route('/login', methods=['GET'])
+@app.doc(params={'userName': 'userName', 'password': 'password'},
+         responses={200: 'Success',
+                    400: 'Validation Error',
+                    403: 'wrong password'})
 def loginUser():
     userName = request.headers['userName']
     if len(userName) == 0 or isinstance(userName, str) == False:
@@ -30,6 +37,11 @@ def loginUser():
 
 
 @app.route('/menu', methods=['POST'])
+@app.doc(params={'name': 'menu name', 'password': 'password'},
+         responses={201: 'Success',
+                    400: 'Validation Error',
+                    401: 'authentication failed',
+                    409: 'Menu already exist'})
 def addMenu():
     headers = request.headers
     bearer = headers.get('Authorization')    # Bearer YourTokenHere
@@ -48,6 +60,11 @@ def addMenu():
 
 
 @app.route('/menu', methods=['DELETE'])
+@app.doc(params={'name': 'name', 'password': 'password'},
+         responses={201: 'Success',
+                    400: 'Validation Error',
+                    401: 'authentication failed',
+                    404: 'menu deleted'})
 def removeMenu():
     headers = request.headers
     bearer = headers.get('Authorization')    # Bearer YourTokenHere
@@ -64,10 +81,13 @@ def removeMenu():
     if menu is None:
         return Response("menu not found", status=404, mimetype='application/json')
     menu.delete()
-    return Response("menu deleted", status=200, mimetype='application/json')
+    return Response("menu deleted", status=201, mimetype='application/json')
 
 
 @app.route('/menu', methods=['GET'])
+@app.doc(params={'orderBy': 'orderBy'},
+         responses={201: 'Success',
+                    400: 'Validation Error'})
 def getMenu():
     orderBy = request.headers['orderBy']
 
@@ -83,6 +103,12 @@ def getMenu():
 
 
 @app.route('/dish', methods=['POST'])
+@app.doc(params={'name': 'name', 'menuName': 'menuName',
+                 'description': 'description', 'price': 'price',
+                 'timePreparation': 'timePreparation', 'vegan': 'vegan'},
+         responses={201: 'Success',
+                    400: 'Validation Error',
+                    409: 'db error'})
 def adddish():
     headers = request.headers
     bearer = headers.get('Authorization')    # Bearer YourTokenHere
@@ -122,6 +148,15 @@ def adddish():
         return Response("db error", 409, mimetype='application/json')
 
 @app.route('/dish', methods=['PUT'])
+@app.doc(params={'id': 'id',
+                 'name' : 'name',
+                 'menuName': 'menu name',
+                 'description': 'description',
+                 'price': 'price',
+                 'timePreparation': 'timePreparation',
+                 'vegan': 'vegan'},
+         responses={200: 'Success',
+                    400: 'Validation Error'})
 def updatedish():
     headers = request.headers
     bearer = headers.get('Authorization')    # Bearer YourTokenHere
@@ -164,6 +199,9 @@ def updatedish():
         return Response("db error", 409, mimetype='application/json')
 
 @app.route('/dish', methods=['GET'])
+@app.doc(params={'menu': 'menu name', 'dish': 'dish substring'},
+         responses={200: 'Success',
+                    400: 'Validation Error'})
 def listDish():
     menuName = request.headers['menu']
     if len(menuName) == 0 or isinstance(menuName, str) == False:
