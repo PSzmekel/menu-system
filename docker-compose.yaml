@@ -1,0 +1,17 @@
+version: "3.9"
+services: 
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres
+    network_mode: bridge
+    ports: 
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+  web-app:
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: menu-app
+    ports:
+      - "5000:5000"
