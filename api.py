@@ -1,5 +1,6 @@
 from models import *
 from flask import request, Response, jsonify
+from mail import mailing
 
 
 @app.route('/user', methods=['POST'])
@@ -173,6 +174,8 @@ def listDish():
         return Response("dishName wrrong value", status=400, mimetype='application/json')
 
     return jsonify({'menu': Dish.list(menuName, dishName)})
+
+mailing(1).start()
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)

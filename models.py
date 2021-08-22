@@ -134,5 +134,15 @@ class Dish(db.Model):
             return ex
         return None
 
-    def list(_menu, _substring):
-        return [Dish.json(dish) for dish in Dish.query.filter(Dish.menuName==_menu, Dish.name.contains(_substring)).all()]
+    def list(_menu, _substring, _createdTime, _updatedTime):
+        return [Dish.json(dish) for dish in Dish.query.filter(Dish.menuName==_menu, 
+                                                              Dish.name.contains(_substring),
+                                                              Dish.createdTime >= _createdTime,
+                                                              Dish.updatedTime >= _updatedTime
+                                                              ).all()]
+
+    def listForMail():
+        return [Dish.json(dish) for dish in Dish.query.filter(
+                                                              Dish.createdTime >= datetime.datetime.now() - datetime.timedelta(days=1),
+                                                              Dish.updatedTime >= datetime.datetime.now() - datetime.timedelta(days=1)
+                                                              ).all()]
