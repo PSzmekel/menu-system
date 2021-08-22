@@ -1,6 +1,5 @@
-from datetime import datetime
+from datetime import datetime,timedelta
 import os
-
 from sqlalchemy.orm import exc
 from sqlalchemy.sql.functions import func
 from settings import app
@@ -143,6 +142,6 @@ class Dish(db.Model):
 
     def listForMail():
         return [Dish.json(dish) for dish in Dish.query.filter(
-                                                              Dish.createdTime >= datetime.datetime.now() - datetime.timedelta(days=1),
-                                                              Dish.updatedTime >= datetime.datetime.now() - datetime.timedelta(days=1)
+                                                              Dish.createdTime >= datetime.now() - timedelta(days=1),
+                                                              Dish.updatedTime >= datetime.now() - timedelta(days=1)
                                                               ).all()]
