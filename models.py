@@ -3,7 +3,7 @@ import os
 from sqlalchemy.orm import exc
 from sqlalchemy.sql.functions import func
 from settings import app
-from werkzeug.security import generate_password_hash, check_password_hash, cached_property
+# from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc, desc
 
@@ -20,7 +20,7 @@ class User(db.Model):
         return User.query.filter_by(name=_name).first()
 
     def add(_name, _password):
-        newUser =User(name = _name,  passHash = generate_password_hash(_password))
+        newUser =User(name = _name,  passHash = _password)
         db.session.add(newUser)
         try:
             db.session.commit()
@@ -30,7 +30,7 @@ class User(db.Model):
         return None
 
     def checkPassword(self, _password):
-        if check_password_hash(self.passHash, _password):
+        if self.passHash == _password:
             return os.environ['TOKEN']
         else:
             return ''
