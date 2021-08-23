@@ -27,3 +27,5 @@ class mailing(threading.Thread):
                     print('Error: unable to send email')
 
                 time.sleep(1)
+
+mailing(1).start()
