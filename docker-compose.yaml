@@ -3,7 +3,8 @@ services:
   postgres-db:
     image: postgres:latest
     container_name: postgres
-    network_mode: bridge
+    networks:
+      - fibnetwork
     ports: 
       - "5432:5432"
     environment:
@@ -13,5 +14,11 @@ services:
       context: .
       dockerfile: ./Dockerfile
     container_name: menu-app
+    networks:
+      - fibnetwork
     ports:
       - "5000:5000"
+
+networks:
+      fibnetwork:
+          driver: bridge
